@@ -88,6 +88,9 @@ print_msg(4, "\nCompiling Applications...")
 categories = os.listdir(source_folder)
 categories.sort()
 new_index = {}
+new_index['categories'] = {}
+new_index['metadata'] = {}
+new_index['stats'] = {}
 
 # Clear the previous compiled state
 if os.path.exists(compiled_folder):
@@ -97,7 +100,7 @@ os.mkdir(compiled_media_folder)
 
 # Add each application.
 for category in categories:
-    new_index[category] = {}
+    new_index['categories'][category] = {}
     apps = os.listdir(os.path.join(source_folder, category))
     apps.sort()
 
@@ -132,11 +135,11 @@ for category in categories:
             break
 
         # Add to compiled index
-        new_index[category][appid] = index
+        new_index['categories'][category][appid] = index
 
         # ... ensuring data is HTML safe.
         for key in ["name", "summary", "description"]:
-            new_index[category][appid][key] = index[key].replace("'", "&#8217;")
+            new_index['categories'][category][appid][key] = index[key].replace("'", "&#8217;")
 
         # Copy application icon
         source_dir = os.path.join(source_folder, category, appid)
@@ -159,10 +162,10 @@ print_msg(2, "Compiled Applications!\n")
 print_msg(4, "Writing: stats")
 categories_no = 0
 apps_no = 0
-for category in new_index.keys():
+for category in new_index['categories'].keys():
     if category not in ["unlisted", "stats"]:
         categories_no += 1
-        category_apps = new_index[category].keys()
+        category_apps = new_index['categories'][category].keys()
         apps_no += len(category_apps)
 
 git_revision_count = int(subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE).communicate()[0])
@@ -180,7 +183,7 @@ new_index["stats"] = {
 for filename in ["distro", "supported"]:
     print_msg(4, "Writing: " + filename)
     with open(metadata_folder + filename + ".json", "r") as f:
-        new_index[filename] = json.load(f)
+        new_index['metadata'][filename] = json.load(f)
 
 # Copy other assets
 for asset in ["distro-logo.svg", "distro-logo-mono.svg"]:
