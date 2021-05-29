@@ -186,7 +186,7 @@ for filename in ["distro", "supported"]:
         new_index['metadata'][filename] = json.load(f)
 
 # Copy other assets
-for asset in ["distro-logo.svg", "distro-logo-mono.svg"]:
+for asset in ["distro-logo.svg", "distro-logo-mono.svg", "__init__.py"]:
     print_msg(4, "Copying: " + asset)
     shutil.copy(os.path.join(metadata_folder, asset), os.path.join(compiled_folder, asset))
 
